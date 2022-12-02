@@ -27,3 +27,6 @@ if __name__ == '__main__':
         print(array[1:10])
         max_sub = max_sub_prod(array)
         print(max_sub)
+
+    '''array = [3,4,-6,2,7,-9]
+    print(max_sub_prod(array))'''
