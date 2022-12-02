@@ -1,0 +1,110 @@
+\documentclass[9pt]{article}
+\usepackage{program}
+\usepackage{german}
+\usepackage{fullpage}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage[latin1]{inputenc}
+\input epsf
+
+\textheight25cm
+\topmargin-0.5cm
+\pagestyle{empty}
+
+\parindent 0pt
+\begin{document}
+\def\mod{\mbox{\, mod\, }}
+\def\N{\bf N}
+
+{\sc Institute for Software Technology\hfill 2022-11-24}\\[.1cm]
+Oswin Aichholzer, Birgit Vogtenhuber\\
+
+\begin{center}
+{\Large\bf Datastructures and Algorithms 2, WS 2022/23\\[0.1cm]
+Assignment~$1$}\\
+
+\end{center}
+
+\color{blue}
+{\bf\it
+\vspace{1ex}
+\hspace{-1ex}\begin{tabular}{lll}
+
+Surname:  ${\underline{Freiberger}}$ & First name:  ${\underline{Jakob}}$ & Matr.No.:  ${\underline{12109786}}$ \\
+\end{tabular}
+}
+\color{black}
+
+{\bf Remark:}  Please note that it is mandatory to write the exercise on your own, legibly and in logical order.
+The deadline for this exercise is {\bf Tuesday, 2022-12-06 18:00}. 
+
+Your solution has to be handed in via the teach center in form of a pdf-file before this deadline.
+Please observe also the remarks in the course as well as on the homepage.\\
+This homework assignment contributes 15\% to the overall grading of the course (4\% for task (a), 6\% for task (b), and 5\% for task (c)).
+Questions to this assignment will be answered in the discussion session on 2022-11-30 and in discord sessions with your TA. \\
+\\
+\color{blue}
+Student's note: I would like to apologize for any ugly formatting, as I am not very good with LaTeX.
+\color{black}
+\vspace{4ex}
+
+{\bf Maximum Product}
+Given is an array $A[1,\ldots ,n]$ of $n$ numbers $a_1,\ldots,a_n$ with $a_k \geq 0$ for $k=1,\ldots ,n$.
+We are interested in an algorithm that finds a continuous subarray $A[i,\ldots ,j]$ which maximizes the product $a_i*a_{i+1}*\ldots * a_j$.
+\begin{enumerate}
+\item[(a)] Design an algorithm that is simple to implement and easy to understand. This algorithm does not need to be the most efficient solution.
+
+\item[(b)] Design an algorithm that is as efficient as possible.
+\end{enumerate}
+ For both algorithms you can use ideas from the lecture. Explain your approaches in detail, show that the algorithms are correct, and prove tight upper bounds for their time and space requirement. 
+\begin{itemize}
+\item[(c)] Which of your algorithms do also work if we release the restriction that  $a_k \geq 0$ for $k=1,\ldots ,n$? In other words, entries of $A[1,\ldots ,n]$ now can also be negative. Argue your answer for both algorithms.
+\end{itemize}
+
+\vspace{1cm}
+
+\textbf{Solution:}
+\begin{enumerate}
+    \item[(a)] This problem is reminiscent of the Maximum Subarray Sum problem (which I will abbreviate as MSS) treated in the lecture videos. For the MSS, there are array elements that increase the total sum (that is, \emph{positive} elements) as well as elements that decrease the total sum (that is, \emph{negative} elements). Similarly, in this Maximum Subarray Product (MSP), there are elements \emph{greater than} 1 that increase the total product, and elements \emph{less than} 1 that decrease the total product. Elements equal to one do not affect the product. Also, any subarray containing a zero (0) will reduce the total product to 0.\\
+    \\
+    A simple algorithm to find the maximum product of a continuous subarray would be the following:\\
+    We initialize the maximum product and the wanted start/end indices with zero, because with all elements of the array $\geq0$, the maximum product cannot be less than zero. Then, for every element $a_k$, we would compute $a_k$, then the product of $a_k * a_{k+1}$, then $a_k * a_{k+1} * a_{k+2}$ and so on, until we reach the end of the original array; and for each of these products, we compare it to the previously greatest subarray product. If the product of the current subarray is greater than the global maximum product, we save the current product to the global maximum product, and also save the current subarray start and end index.\\
+    For each $a_k$, we check every subarray starting from that index; and $a_k$ runs from $a_1$ to $a_n$, so  we can be sure that we do in fact compute the product of every single continuous subarray of $A$. That means that the actual subarray with the maximum product must be among those that we checked, and is saved as the global maximum.\\
+    \\
+    We see that we have $n$ starting elements $a_k$, and \textbf{for each} of those, we need to check at most $n$ subarrays, including those with only one element. Again, \textbf{for each} of those subarrays, we need to compute the product of at most $n$ numbers. If we assume constant time for multiplication, we get three nested loops which all depend on the size of the input $n$. Other operations (writing to variables, comparisons) take constant time, so we have a running time of $T(n)\leq n*n*n*\mathcal{O}(1)=\mathcal{O}(n^3)$.\\
+    The algorithm only uses a fixed amount of variables, does not create any new arrays or call itself recursively. Therefore we can assume a space complexity of $\mathcal{O}(1)$.
+    \item[(b)] A more efficient approach would be to use a scanline algorithm, similar to the solution for the MSS problem presented in the lecture.
+
+    \begin{algorithm}
+    \caption{Algorithmus}\label{euclid}
+    \begin{algorithmic}[1]
+    \State $\text{total_max} \gets 0$
+    \State $$
+    \State $\textit{stringlen} \gets \text{length of }\textit{string}$
+    \State $i \gets \textit{patlen}$
+    \If {$i > \textit{stringlen}$} \Return false
+    \EndIf
+    \State $j \gets \textit{patlen}$
+    \BState \emph{loop}:
+    \If {$\textit{string}(i) = \textit{path}(j)$}
+    \State $j \gets j-1$.
+    \State $i \gets i-1$.
+    \State \textbf{goto} \emph{loop}.
+    \State \textbf{endif}
+    \EndIf
+    \State $i \gets i+\max(\textit{delta}_1(\textit{string}(i)),\textit{delta}_2(j))$.
+    \EndProcedure
+    \end{algorithmic}
+    \end{algorithm}
+
+\end{enumerate}
+
+Note: Pseudocode formatting adopted from: https://tex.stackexchange.com/questions/163768/write-pseudo-code-in-latex
+
+\end{document}
+
+
+
